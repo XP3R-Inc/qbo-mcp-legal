@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>XP3R QBO MCP — OAuth Callback</title>
+  <style>
+    body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; max-width: 680px; margin: 3rem auto; padding: 0 1rem; color: #1a1a1a; line-height: 1.6; }
+    h1 { margin-bottom: 0.25rem; }
+    .muted { color: #666; }
+    label { display: block; margin-top: 1rem; font-weight: 600; }
+    input { width: 100%; font-family: ui-monospace, Consolas, monospace; padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; }
+    .err { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>QBO authorization received</h1>
+  <p class="muted">Copy these values back into your terminal to finish connecting, then you can close this tab. (These are one-time values and expire within minutes.)</p>
+  <div id="out"></div>
+  <script>
+    var p = new URLSearchParams(location.search);
+    var out = document.getElementById('out');
+    var err = p.get('error');
+    function addField(label, val) {
+      var l = document.createElement('label'); l.textContent = label;
+      var i = document.createElement('input'); i.readOnly = true; i.value = val || '';
+      i.onclick = function () { this.select(); };
+      out.appendChild(l); out.appendChild(i);
+    }
+    if (err) {
+      var d = document.createElement('p'); d.className = 'err';
+      d.textContent = 'Authorization error: ' + err + (p.get('error_description') ? ' — ' + p.get('error_description') : '');
+      out.appendChild(d);
+    } else if (!p.get('code')) {
+      var n = document.createElement('p'); n.textContent = 'No authorization code found in the URL.';
+      out.appendChild(n);
+    } else {
+      addField('realmId', p.get('realmId'));
+      addField('state', p.get('state'));
+      addField('code', p.get('code'));
+    }
+  </script>
+</body>
+</html>
